@@ -1,7 +1,7 @@
 //set up main game parameters
 function setup(){
   this.invadeVelocity =  10;
-  this.ship = null;
+  this.Ship = null;
   this.invade = [];
 
   invadeInitialVelocity = 25,
@@ -16,39 +16,39 @@ function setup(){
 };
 
 //set invaders
-function Invade(x, y, rank, file) {
-    this.invade.x = x;
-    this.invade.y = y;
-    this.invade.rank = rank;
-    this.invade.file = file;
-    this.invade.width = 18;
-    this.invade.height = 14;
+function Invader(x, y, rank, file) {
+    this.x = x;
+    this.y = y;
+    this.rank = rank;
+    this.file = file;
+    this.width = 18;
+    this.height = 14;
 };
-//set ship
+
+// Setup the ship at a location
 function Ship(x, y) {
-    this.ship.x = x;
-    this.ship.y = y;
-    this.ship.width = 20;
-    this.ship.height = 16;
-    this.ship.l = false;
-    this.ship.r = false;
+    this.x = x;
+    this.y = y;
+    this.width = 20;
+    this.height = 16;
 };
-//set projectile
+
+// Setup the projectile launched by the ship
 function Proj(x, y, velocity) {
-    this.proj.x = x;
-    this.proj.y = y;
+    this.x = x;
+    this.y = y;
     this.velocity = velocity;
     console.log (this.x);
 };
 
 //set up invader fields and array. also checks collisions
-function maintain(Proj, setup, Ship, Invade){
+function maintain(Proj, setup, Ship, Invader){
   var ranks = 5;
     var files = 10;
     var invaders = [];
     for(var rank = 0; rank < ranks; rank++){
         for(var file = 0; file < files; file++) {
-           invade.push(new Invade(
+           invade.push(new Invader(
                (500 / 2) + ((files/2 - files) * 200 / files),
                (0 + rank * 20, rank, file)));
        }
@@ -66,11 +66,11 @@ function maintain(Proj, setup, Ship, Invade){
             for(var j=0; j<this.Proj.length; j++){
                 var proj = this.Proj[j];
 
-                if(this.proj.x >= (this.invade.x - 18/2) && this.proj.x <= (this.invade.x + 18/2) &&
-                    this.proj.y >= (this.invade.y - 14/2) && this.proj.y <= (this.invade.y + 14/2)) {
+                if(this.Proj.x >= (this.Invader.x - 18/2) && this.Proj.x <= (this.Invader.x + 18/2) &&
+                    this.Proj.y >= (this.Invader.y - 14/2) && this.Proj.y <= (this.Invader.y + 14/2)) {
 
 
-                    this.proj.splice(j--, 1);
+                    this.Proj.splice(j--, 1);
                     impact = true;
 
                     break;
@@ -83,10 +83,10 @@ function maintain(Proj, setup, Ship, Invade){
         //check for invader collisions with ship
         for(var i=0; i<this.invaders.length; i++) {
             var invaders = this.invaders[i];
-            if((invade.x + 18/2) > (this.ship.x - 20/2) &&
-                (invade.x - 18/2) < (this.ship.x + 20/2) &&
-                (invade.y + 14/2) > (this.ship.y - 16/2) &&
-                (invade.y - 14/2) < (this.ship.y + 16/2)) {
+            if((invade.x + 18/2) > (this.Ship.x - 20/2) &&
+                (invade.x - 18/2) < (this.Ship.x + 20/2) &&
+                (invade.y + 14/2) > (this.Ship.y - 16/2) &&
+                (invade.y - 14/2) < (this.Ship.y + 16/2)) {
 
             }
         };
@@ -96,16 +96,16 @@ function maintain(Proj, setup, Ship, Invade){
   function moveShip(){
     window.addEventListener('keydown', function(event){
       if (event.keyCode === 37){
-        this.ship.l = true;
+        this.Ship.l = true;
       } else if (event.keyCode === 39){
-        this.ship.r = true;
+        this.Ship.r = true;
         }
     });
     window.addEventListener('keyup', function(event){
       if (event.keyCode === 37){
-        this.ship.l = false;
+        this.Ship.l = false;
       } else if (event.keyCode === 39){
-        this.ship.r = false;
+        this.Ship.r = false;
 
         }
 
@@ -114,11 +114,11 @@ function maintain(Proj, setup, Ship, Invade){
             console.log ("Fire!");
 
             }
-    if(this.ship.x < 500) {
-        this.ship.x = 500;
+    if(this.Ship.x < 500) {
+        this.Ship.x = 500;
     }
-    if(this.ship.x > 500) {
-        this.ship.x = 500;
+    if(this.Ship.x > 500) {
+        this.Ship.x = 500;
     }
 
   })
@@ -132,37 +132,43 @@ function fireproj() {
   if(this.lastProjTime === null || ((new Date()).valueOf() - this.lastProjTime) > (1000 / this.setup.rocketMaxFireRate))
       {
 
-    this.proj.push(new Proj(this.ship.x, this.ship.y - 12, this.setup.projVelocity));
+    this.Proj.push(new Proj(this.Ship.x, this.Ship.y - 12, this.setup.projVelocity));
     this.lastProjTime = (new Date()).valueOf();
      }
 };
 
 //draw objects
-  function draw(setup, Invade, Ship, proj, maintain){
+  function draw(setup, Invader, Ship, proj, maintain){
 
     //get the canvas
     var canvas = document.getElementsByTagName('canvas')[0];
     var brush = canvas.getContext('2d');
     brush.beginPath();
     //draw ship
-    brush.fillRect(this.ship.x - (20 / 2), this.ship.y - (16 / 2), 20, 16);
+    brush.fillRect(this.Ship.x - (20 / 2), this.Ship.y - (16 / 2), 20, 16);
 
-  //  Draw invaders.
-
+/*    //  Draw invaders.
     for(var i=0; i<this.invaders.length; i++) {
       var invaders = this.invaders[i];
-      brush.fillRect(invadeers.x - 18/2, invadeers.y - 14/2, 18, 14);
-    }
-    //draw projectiles
+      brush.fillRect(this.invaders.x - 18/2, this.invaders.y - 14/2, 18, 14);
+    }*/
 
-    for(var i=0; i<this.proj.length; i++) {
-      var proj = this.proj[i];
-      brush.fillRect(this.proj.x, this.proj.y - 2, 1, 4);
+    //draw projectiles
+    for(var i=0; i<this.Proj.length; i++) {
+      var proj = this.Proj[i];
+      brush.fillRect(this.Proj.x, this.Proj.y - 2, 1, 4);
       }
     //animate and update
     brush.clearRect(0, 0, 500, 500)
-    update();
+    //update();
     window.requestAnimationFrame(draw);
 
   };
   draw();
+
+  /* ****************************** 
+     New code section
+     ****************************** */
+
+  //  Create the ship.
+    this.ship = new Ship(game.width / 2, game.gameBounds.bottom); 
